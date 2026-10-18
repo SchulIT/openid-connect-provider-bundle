@@ -109,6 +109,7 @@ return static function (ContainerConfigurator $container): void {
                 service('ajgarlag.openid_connect_provider.openid_connect.claim_extractor'),
                 service('event_dispatcher'),
             ])
+            ->tag('controller.service_arguments')
         ->alias(UserInfoController::class, 'ajgarlag.openid_connect_provider.controller.userinfo')
 
         ->set('ajgarlag.openid_connect_provider.controller.jwks', JwksController::class)
