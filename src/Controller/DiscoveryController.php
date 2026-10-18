@@ -18,6 +18,7 @@ final readonly class DiscoveryController
         private string $tokenEndpointRoute,
         private string $jwksEndpointRoute,
         private string $endSessionEndpointRoute,
+        private string $userInfoEndpointRoute,
     ) {
     }
 
@@ -28,6 +29,7 @@ final readonly class DiscoveryController
                 'issuer' => $request->getSchemeAndHttpHost() . $request->getBasePath(),
                 'authorization_endpoint' => $this->urlGenerator->generate($this->authorizationEndpointRoute, [], UrlGeneratorInterface::ABSOLUTE_URL),
                 'token_endpoint' => $this->urlGenerator->generate($this->tokenEndpointRoute, [], UrlGeneratorInterface::ABSOLUTE_URL),
+                'userinfo_endpoint' => $this->urlGenerator->generate($this->userInfoEndpointRoute, [], UrlGeneratorInterface::ABSOLUTE_URL),
                 'jwks_uri' => $this->urlGenerator->generate($this->jwksEndpointRoute, [], UrlGeneratorInterface::ABSOLUTE_URL),
                 'end_session_endpoint' => $this->urlGenerator->generate($this->endSessionEndpointRoute, [], UrlGeneratorInterface::ABSOLUTE_URL),
                 'response_types_supported' => $this->authorizationServer->getResponseTypesSupported(),

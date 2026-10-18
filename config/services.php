@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 use Ajgarlag\Bundle\OpenIDConnectProviderBundle\Command\SaveRelyingPartyCommand;
@@ -9,6 +10,7 @@ use Ajgarlag\Bundle\OpenIDConnectProviderBundle\Command\ShowRelyingPartyCommand;
 use Ajgarlag\Bundle\OpenIDConnectProviderBundle\Controller\DiscoveryController;
 use Ajgarlag\Bundle\OpenIDConnectProviderBundle\Controller\EndSessionController;
 use Ajgarlag\Bundle\OpenIDConnectProviderBundle\Controller\JwksController;
+use Ajgarlag\Bundle\OpenIDConnectProviderBundle\Controller\UserInfoController;
 use Ajgarlag\Bundle\OpenIDConnectProviderBundle\EventListener\PostLogoutRedirectListener;
 use Ajgarlag\Bundle\OpenIDConnectProviderBundle\Logout\CachePostLogoutRedirectUriStorage;
 use Ajgarlag\Bundle\OpenIDConnectProviderBundle\Logout\PostLogoutRedirectUriStorageInterface;
@@ -81,6 +83,7 @@ return static function (ContainerConfigurator $container): void {
                 null,
                 null,
                 null,
+                null
             ])
             ->tag('controller.service_arguments')
         ->alias(DiscoveryController::class, 'ajgarlag.openid_connect_provider.controller.discovery')
@@ -99,6 +102,14 @@ return static function (ContainerConfigurator $container): void {
             ])
             ->tag('controller.service_arguments')
         ->alias(EndSessionController::class, 'ajgarlag.openid_connect_provider.controller.end_session')
+
+        ->set('ajgarlag.openid_connect_provider.controller.userinfo', UserInfoController::class)
+            ->args([
+                service(TokenStorageInterface::class),
+                service('ajgarlag.openid_connect_provider.openid_connect.claim_extractor'),
+                service('event_dispatcher'),
+            ])
+        ->alias(UserInfoController::class, 'ajgarlag.openid_connect_provider.controller.userinfo')
 
         ->set('ajgarlag.openid_connect_provider.controller.jwks', JwksController::class)
             ->args([
