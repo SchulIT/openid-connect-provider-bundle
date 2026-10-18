@@ -1,5 +1,5 @@
 {
-    "name": "ajgarlag/openid-connect-provider-bundle",
+    "name": "schulit/openid-connect-provider-bundle",
     "type": "symfony-bundle",
     "description": "OpenID Connect provider Symfony bundle",
     "keywords": ["openid", "connect", "oidc", "provider", "authentication", "bundle", "auth", "bundle"],
