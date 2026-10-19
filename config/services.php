@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 use Ajgarlag\Bundle\OpenIDConnectProviderBundle\Command\SaveRelyingPartyCommand;
@@ -17,11 +16,13 @@ use Ajgarlag\Bundle\OpenIDConnectProviderBundle\Logout\PostLogoutRedirectUriStor
 use Ajgarlag\Bundle\OpenIDConnectProviderBundle\Manager\RelyingPartyManagerInterface;
 use Ajgarlag\Bundle\OpenIDConnectProviderBundle\OAuth2\IdTokenGrant;
 use Ajgarlag\Bundle\OpenIDConnectProviderBundle\OpenIDConnect\IdTokenResponse;
+use Ajgarlag\Bundle\OpenIDConnectProviderBundle\OpenIDConnect\UserInfoResponse;
 use Ajgarlag\Bundle\OpenIDConnectProviderBundle\Repository\IdentityProvider;
 use League\Bundle\OAuth2ServerBundle\Manager\ClientManagerInterface;
 use OpenIDConnectServer\ClaimExtractor;
 use OpenIDConnectServer\Repositories\IdentityProviderInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 return static function (ContainerConfigurator $container): void {
     $container->services()
@@ -43,6 +44,15 @@ return static function (ContainerConfigurator $container): void {
                 service('request_stack'),
             ])
         ->alias(IdTokenResponse::class, 'ajgarlag.openid_connect_provider.openid_connect.response')
+
+        ->set('ajgarlag.openid_connect_provider.openid_connect.userinfo_response', UserInfoResponse::class)
+            ->args([
+                service('ajgarlag.openid_connect_provider.openid_connect.claim_extractor'),
+                service('ajgarlag.openid_connect_provider.repository.identity_provider'),
+                service('event_dispatcher'),
+                service('request_stack'),
+            ])
+        ->alias(UserInfoResponse::class, 'ajgarlag.openid_connect_provider.openid_connect.userinfo_response')
 
         ->set('ajgarlag.openid_connect_provider.grant.id_token', IdTokenGrant::class)
             ->args([
@@ -83,7 +93,7 @@ return static function (ContainerConfigurator $container): void {
                 null,
                 null,
                 null,
-                null
+                null,
             ])
             ->tag('controller.service_arguments')
         ->alias(DiscoveryController::class, 'ajgarlag.openid_connect_provider.controller.discovery')
@@ -106,8 +116,7 @@ return static function (ContainerConfigurator $container): void {
         ->set('ajgarlag.openid_connect_provider.controller.userinfo', UserInfoController::class)
             ->args([
                 service(TokenStorageInterface::class),
-                service('ajgarlag.openid_connect_provider.openid_connect.claim_extractor'),
-                service('event_dispatcher'),
+                service('ajgarlag.openid_connect_provider.openid_connect.userinfo_response'),
             ])
             ->tag('controller.service_arguments')
         ->alias(UserInfoController::class, 'ajgarlag.openid_connect_provider.controller.userinfo')
