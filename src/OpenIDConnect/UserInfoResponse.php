@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Ajgarlag\Bundle\OpenIDConnectProviderBundle\OpenIDConnect;
 
 use Ajgarlag\Bundle\OpenIDConnectProviderBundle\Event\UserClaimsResolveEvent;
-use Ajgarlag\Bundle\OpenIDConnectProviderBundle\Repository\IdentityProvider;
 use Lcobucci\JWT\Token\RegisteredClaims;
 use League\Bundle\OAuth2ServerBundle\Security\Authentication\Token\OAuth2Token;
 use OpenIDConnectServer\ClaimExtractor;
+use OpenIDConnectServer\Repositories\IdentityProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
@@ -16,7 +16,7 @@ readonly class UserInfoResponse
 {
     public function __construct(
         private ClaimExtractor $claimExtractor,
-        private IdentityProvider $identityProvider,
+        private IdentityProviderInterface $identityProvider,
         private EventDispatcherInterface $eventDispatcher,
         private RequestStack $requestStack,
     ) {
